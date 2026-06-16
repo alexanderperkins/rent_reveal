@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rent Reveal</title>
+  <link rel="stylesheet" href="/css/index.css">
+</head>
+<body>
+  <nav class="nav">
+    <a class="nav-logo" href="/">Rent Reveal</a>
+    <div class="nav-links">
+      <a href="/" class="nav-link active">Search</a>
+      <a href="/properties.html" class="nav-link">Properties</a>
+      <a href="/reviewUpload.html" class="nav-link nav-link--cta">Submit a Review</a>
+    </div>
+  </nav>
+
+  <main class="home">
+    <section class="hero">
+      <h1 class="hero-title">KNOW BEFORE YOU SIGN.</h1>
+      <p class="hero-sub">Anonymous reviews from real tenants. Search any address to see management quality, safety, and what living there actually costs.</p>
+      <div class="search-bar">
+        <input
+          type="text"
+          id="address-input"
+          class="search-input"
+          placeholder="Enter an address, neighborhood, or zip code…"
+          autocomplete="off"
+        />
+        <button class="search-btn" id="search-btn">Search</button>
+      </div>
+    </section>
+
+    <section class="map-section">
+      <div id="map"></div>
+    </section>
+  </main>
+
+  <script type="module" src="/js/index.js"></script>
+</body>
+</html>
