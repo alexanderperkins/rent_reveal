@@ -1,0 +1,14 @@
+{
+  "name": "rent-reveal",
+  "version": "1.0.0",
+  "description": "Anonymous rental review platform",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch --dns-result-order=ipv4first src/server.js",
+    "lint": "eslint .",
+    "format": "prettier --write ."
+  },
+  "license": "MIT"
+}
