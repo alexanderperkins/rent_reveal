@@ -1,0 +1,47 @@
+/* properties page */
+
+.properties-layout {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+.properties-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 14px;
+}
+
+.empty-msg {
+  font-size: 14px;
+  color: #888;
+  margin-top: 16px;
+  list-style: none;
+}
+
+/* property list */
+#property-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 16px;
+}
+
+.property-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 0.5px solid #e0ddd6;
+  font-size: 14px;
+}
+
+.item-address {
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.item-meta {
+  color: #888;
+  font-size: 13px;
+}

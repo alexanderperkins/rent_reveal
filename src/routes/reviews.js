@@ -11,7 +11,7 @@ async function recalcRatings(db, propertyId) {
     .toArray();
 
   const count = reviews.length;
-  const avg = (field) =>
+  const avg = (field) => 
     count
       ? reviews.reduce((sum, r) => sum + (r.ratings[field] ?? 0), 0) / count
       : 0;

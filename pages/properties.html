@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Properties – Rent Reveal</title>
+    <link rel="stylesheet" href="/css/index.css" />
+    <link rel="stylesheet" href="/css/properties.css" />
+  </head>
+  <body>
+    <nav class="nav">
+      <a class="nav-logo" href="/">Rent Reveal</a>
+      <div class="nav-links">
+        <a href="/" class="nav-link">Search</a>
+        <a href="/pages/properties.html" class="nav-link active">Properties</a>
+        <a href="/pages/reviewUpload.html" class="nav-link nav-link--cta">Submit a Review</a>
+      </div>
+    </nav>
+
+    <main class="properties-layout">
+      <h2 class="properties-title">Properties</h2>
+      <div class="search-bar">
+        <input
+          type="text"
+          id="property-search"
+          class="search-input"
+          placeholder="Search by address or zip…"
+          autocomplete="off"
+        />
+        <button class="search-btn" id="search-btn">Search</button>
+      </div>
+      <ul id="property-list">
+        <li class="empty-msg">Search above to see properties.</li>
+      </ul>
+    </main>
+
+    <script src="/js/properties.js"></script>
+  </body>
+</html>

@@ -1,3 +1,4 @@
+/* homepage */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -18,7 +19,6 @@ a {
   text-decoration: none;
 }
 
-/* Nav */
 .nav {
   display: flex;
   align-items: center;
@@ -73,13 +73,12 @@ a {
   background: #333;
 }
 
-/* Main layout: left hero + right map side by side */
 .home {
   display: flex;
   height: calc(100vh - 56px);
 }
 
-/* Left half */
+/* search on left side */
 .hero {
   width: 50%;
   background: #F4F1EB;
@@ -106,7 +105,6 @@ a {
   max-width: 420px;
 }
 
-/* Search bar */
 .search-bar {
   display: flex;
   gap: 8px;
@@ -144,7 +142,7 @@ a {
   background: #333;
 }
 
-/* Right half — map */
+/* map on right side */
 .map-section {
   width: 50%;
 }

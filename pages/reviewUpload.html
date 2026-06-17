@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Submit a Review – Rent Reveal</title>
+    <link rel="stylesheet" href="/css/index.css" />
+    <link rel="stylesheet" href="/css/reviewUpload.css" />
+  </head>
+  <body>
+    <nav class="nav">
+      <a class="nav-logo" href="/">Rent Reveal</a>
+      <div class="nav-links">
+        <a href="/" class="nav-link">Search</a>
+        <a href="/pages/properties.html" class="nav-link">Properties</a>
+        <a href="/pages/reviewUpload.html" class="nav-link nav-link--cta">Submit a Review</a>
+      </div>
+    </nav>
+
+    <main class="review-layout">
+      <div class="review-container">
+        <h1 class="page-title">Submit a Review</h1>
+        <p class="page-sub">Reviews are anonymous. Help future tenants make informed decisions.</p>
+
+        <!-- search for property -->
+        <h2 class="step-heading">Check if property exists</h2>
+        <div class="search-bar">
+          <input
+            type="text"
+            id="address-input"
+            class="search-input"
+            placeholder="Enter the property address…"
+            autocomplete="off"
+          />
+          <button class="search-btn" id="search-btn">Search</button>
+        </div>
+        <div id="search-results"></div>
+
+        <!-- add property form -->
+        <div id="add-property-section" class="hidden">
+          <p class="hint-text">Property not found. Add it below:</p>
+          <label for="new-address">Street address</label>
+          <input type="text" id="new-address" class="field" placeholder="123 Main St" />
+          <label for="new-city">City</label>
+          <input type="text" id="new-city" class="field" placeholder="Boston" />
+          <label for="new-state">State</label>
+          <input type="text" id="new-state" class="field" placeholder="MA" maxlength="2" />
+          <label for="new-zip">Zip code</label>
+          <input type="text" id="new-zip" class="field" placeholder="02115" maxlength="5" />
+          <button class="search-btn" id="add-property-btn">Next: Rate Property</button>
+        </div>
+
+        <!-- write review -->
+        <div id="review-section" class="hidden">
+          <h2 class="step-heading">Please share your review for:</h2>
+          <p id="selected-address" class="selected-address"></p>
+          <label>Overall rating</label>
+          <div id="stars" class="stars">
+            <button class="star" data-value="1">★</button>
+            <button class="star" data-value="2">★</button>
+            <button class="star" data-value="3">★</button>
+            <button class="star" data-value="4">★</button>
+            <button class="star" data-value="5">★</button>
+          </div>
+          <label for="comments">Comment</label>
+          <textarea id="comments" class="field field-textarea" placeholder="What was it like living here?"></textarea>
+          <button class="search-btn" id="submit-btn">Submit review anonymously</button>
+          <p id="submit-msg" class="submit-msg"></p>
+        </div>
+
+      </div>
+    </main>
+
+    <script src="/js/reviewUpload.js"></script>
+  </body>
+</html>
