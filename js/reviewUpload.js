@@ -10,7 +10,7 @@ document.getElementById('search-btn').addEventListener('click', function () {
   document.getElementById('search-results').innerHTML = '<p class="empty-msg">Searching…</p>';
   document.getElementById('add-property-section').classList.add('hidden');
 
-  fetch('/api/properties?search=' + encodeURIComponent(query))
+  fetch('https://rent-reveal.onrender.com/api/properties?search=' + encodeURIComponent(query))
     .then(function (res) {
       return res.json();
     })
@@ -93,7 +93,7 @@ document.getElementById('add-property-btn').addEventListener('click', function (
     return;
   }
 
-  fetch('/api/properties', {
+  fetch('https://rent-reveal.onrender.com/api/properties', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ address: address, city: city, state: state, zip: zip }),
@@ -159,7 +159,7 @@ document.getElementById('submit-btn').addEventListener('click', function () {
 
   var comments = document.getElementById('comments').value.trim();
 
-  fetch('/api/reviews', {
+  fetch('https://rent-reveal.onrender.com/api/reviews', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
