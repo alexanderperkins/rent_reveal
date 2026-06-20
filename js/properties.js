@@ -82,29 +82,56 @@ document.getElementById('property-search').addEventListener('keydown', function 
 // open reviews panel when property clicked
 function makePropertyClickHandler(p) {
   return function () {
+    // if already open for this property, close it
+    var existing = document.getElementById('reviews-panel');
+    if (existing && existing.dataset.propertyId === p._id) {
+      existing.remove();
+      this.classList.remove('selected');
+      return;
+    }
+
+    // remove any existing panel
+    if (existing) existing.remove();
     var items = document.querySelectorAll('.property-item');
     for (var i = 0; i < items.length; i++) {
       items[i].classList.remove('selected');
     }
+
     this.classList.add('selected');
-    loadReviews(p._id, p.location.address + ', ' + p.location.city);
+
+    // create panel and insert after this item
+    var panel = document.createElement('li');
+    panel.id = 'reviews-panel';
+    panel.className = 'reviews-panel';
+    panel.dataset.propertyId = p._id;
+    panel.innerHTML =
+      '<div class="reviews-panel-header">' +
+        '<h3 class="reviews-panel-title">' + p.location.address + ', ' + p.location.city + '</h3>' +
+        '<button class="reviews-close-btn">✕</button>' +
+      '</div>' +
+      '<div id="reviews-list"><p class="empty-msg">Loading reviews…</p></div>';
+
+    this.insertAdjacentElement('afterend', panel);
+
+    panel.querySelector('.reviews-close-btn').addEventListener('click', function () {
+      panel.remove();
+      items = document.querySelectorAll('.property-item');
+      for (var i = 0; i < items.length; i++) {
+        items[i].classList.remove('selected');
+      }
+    });
+
+    loadReviews(p._id);
   };
 }
 
-function loadReviews(propertyId, address) {
-  document.getElementById('reviews-panel-address').textContent = address;
-  document.getElementById('reviews-list').innerHTML = '<p class="empty-msg">Loading reviews…</p>';
-  document.getElementById('reviews-panel').classList.remove('hidden');
-
+function loadReviews(propertyId) {
   fetch(API_BASE + '/api/reviews?propertyId=' + propertyId)
-    .then(function (res) {
-      return res.json();
-    })
-    .then(function (reviews) {
-      renderReviews(reviews);
-    })
+    .then(function (res) { return res.json(); })
+    .then(function (reviews) { renderReviews(reviews); })
     .catch(function () {
-      document.getElementById('reviews-list').innerHTML = '<p class="empty-msg">Could not load reviews.</p>';
+      document.getElementById('reviews-list').innerHTML =
+        '<p class="empty-msg">Could not load reviews.</p>';
     });
 }
 
@@ -117,7 +144,6 @@ function renderReviews(reviews) {
   }
 
   list.innerHTML = '';
-
   for (var i = 0; i < reviews.length; i++) {
     var r = reviews[i];
     var date = new Date(r.createdAt).toLocaleDateString();
@@ -135,12 +161,3 @@ function renderReviews(reviews) {
     list.appendChild(item);
   }
 }
-
-// close reviews panel
-document.getElementById('reviews-close-btn').addEventListener('click', function () {
-  document.getElementById('reviews-panel').classList.add('hidden');
-  var items = document.querySelectorAll('.property-item');
-  for (var i = 0; i < items.length; i++) {
-    items[i].classList.remove('selected');
-  }
-});
