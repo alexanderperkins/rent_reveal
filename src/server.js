@@ -13,6 +13,14 @@ app.use(express.static('.'));
 app.use('/api/properties', propertiesRouter);
 app.use('/api/reviews', reviewsRouter);
 
+app.get('/api/config', (req, res) => {
+  res.json({ mapsApiKey: process.env.MAPS_API_KEY });
+});
+
 connectDB().then(() => {
   app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+});
+
+app.get('/api/config', (req, res) => {
+  res.json({ mapsApiKey: process.env.MAPS_API_KEY });
 });

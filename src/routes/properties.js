@@ -4,6 +4,37 @@ import { ObjectId } from 'mongodb';
 
 const router = Router();
 
+router.get('/', async (req, res) => {
+  try {
+    const db = await getDB();
+    const { q, search } = req.query;
+    const query = q || search;
+    const filter = query
+      ? { 'location.address': { $regex: query, $options: 'i' } }
+      : {};
+    const properties = await db
+      .collection('properties')
+      .find(filter)
+      .toArray();
+    res.json(properties);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/:id', async (req, res) => {
+  try {
+    const db = await getDB();
+    const property = await db
+      .collection('properties')
+      .findOne({ _id: new ObjectId(req.params.id) });
+    if (!property) return res.status(404).json({ error: 'Not found' });
+    res.json(property);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 router.post('/', async (req, res) => {
   try {
     const db = await getDB();
