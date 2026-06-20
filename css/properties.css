@@ -115,3 +115,106 @@
   background: #f5f5f5;
   border-radius: 6px;
 }
+
+.review-cats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+}
+
+.review-cat {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  background: #f5f5f5;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+}
+
+.review-cat-label {
+  color: #666;
+  font-weight: 500;
+}
+
+.review-cat-stars {
+  color: #e8a020;
+}
+
+.review-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.review-edit-btn,
+.review-delete-btn {
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  color: #666;
+}
+
+.review-delete-btn:hover {
+  border-color: #c0392b;
+  color: #c0392b;
+}
+
+.review-edit-btn:hover {
+  border-color: #333;
+  color: #333;
+}
+
+.edit-textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+  box-sizing: border-box;
+}
+
+.edit-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.edit-save-btn,
+.edit-cancel-btn {
+  padding: 0.3rem 0.8rem;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.edit-save-btn {
+  background: #333;
+  color: white;
+}
+
+.edit-cancel-btn {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.property-delete-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #999;
+  font-size: 0.9rem;
+  padding: 0.2rem 0.4rem;
+  margin-left: 0.5rem;
+  border-radius: 4px;
+}
+
+.property-delete-btn:hover {
+  color: #c0392b;
+}

@@ -25,7 +25,6 @@ function loadAllProperties() {
     });
 }
 
-// render list
 function renderList(properties) {
   var list = document.getElementById('property-list');
 
@@ -44,11 +43,30 @@ function renderList(properties) {
     item.className = 'property-item';
     item.innerHTML =
       '<span class="item-address">' + p.location.address + ', ' + p.location.city + '</span>' +
-      '<span class="item-meta">' + rating + ' · ' + p.reviewCount + ' reviews</span>';
+      '<span class="item-meta">' + rating + ' · ' + p.reviewCount + ' reviews</span>' +
+      '<button class="property-delete-btn">✕</button>';
 
+    item.querySelector('.property-delete-btn').addEventListener('click', makePropertyDeleteHandler(p._id, item));
     item.addEventListener('click', makePropertyClickHandler(p));
     list.appendChild(item);
   }
+}
+
+function makePropertyDeleteHandler(propertyId, item) {
+  return function (e) {
+    e.stopPropagation(); // prevent opening the reviews panel
+    if (!confirm('Delete this property and all its reviews?')) return;
+    fetch(API_BASE + '/api/properties/' + propertyId, { method: 'DELETE' })
+      .then(function (res) { return res.json(); })
+      .then(function () {
+        var panel = document.getElementById('reviews-panel');
+        if (panel && panel.dataset.propertyId === propertyId) panel.remove();
+        item.remove();
+      })
+      .catch(function () {
+        alert('Could not delete property. Try again.');
+      });
+  };
 }
 
 // search
@@ -149,6 +167,25 @@ function renderReviews(reviews) {
     var date = new Date(r.createdAt).toLocaleDateString();
     var stars = '★'.repeat(r.ratings.overall) + '☆'.repeat(5 - r.ratings.overall);
 
+    var cats = [
+      { label: 'Management', key: 'management' },
+      { label: 'Safety', key: 'safety' },
+      { label: 'Noise', key: 'noise' },
+      { label: 'Cleanliness', key: 'cleanliness' }
+    ];
+
+    var catHTML = '';
+    for (var j = 0; j < cats.length; j++) {
+      var val = r.ratings[cats[j].key] || 0;
+      if (val > 0) {
+        catHTML +=
+          '<div class="review-cat">' +
+            '<span class="review-cat-label">' + cats[j].label + '</span>' +
+            '<span class="review-cat-stars">' + '★'.repeat(val) + '☆'.repeat(5 - val) + '</span>' +
+          '</div>';
+      }
+    }
+
     var item = document.createElement('div');
     item.className = 'review-item';
     item.innerHTML =
@@ -156,8 +193,79 @@ function renderReviews(reviews) {
         '<span class="review-stars">' + stars + '</span>' +
         '<span class="review-date">' + date + '</span>' +
       '</div>' +
-      '<p class="review-comment">' + (r.comments || 'No comment left.') + '</p>';
+      (catHTML ? '<div class="review-cats">' + catHTML + '</div>' : '') +
+      '<p class="review-comment">' + (r.comments || 'No comment left.') + '</p>' +
+      '<div class="review-actions">' +
+        '<button class="review-edit-btn">Edit</button>' +
+        '<button class="review-delete-btn">Delete</button>' +
+      '</div>';
+
+    // delete handler
+    item.querySelector('.review-delete-btn').addEventListener('click', makeDeleteHandler(r._id, r.propertyId, item));
+
+    // edit handler
+    item.querySelector('.review-edit-btn').addEventListener('click', makeEditHandler(r, item));
 
     list.appendChild(item);
   }
+}
+
+function makeDeleteHandler(reviewId, propertyId, item) {
+  return function () {
+    if (!confirm('Delete this review?')) return;
+    fetch(API_BASE + '/api/reviews/' + reviewId, { method: 'DELETE' })
+      .then(function (res) { return res.json(); })
+      .then(function () {
+        item.remove();
+        // reload reviews to update count
+        loadReviews(propertyId);
+      })
+      .catch(function () {
+        alert('Could not delete review. Try again.');
+      });
+  };
+}
+
+function makeEditHandler(r, item) {
+  return function () {
+    // swap comment text for an editable textarea
+    var commentEl = item.querySelector('.review-comment');
+    var currentText = commentEl.textContent;
+
+    commentEl.innerHTML =
+      '<textarea class="edit-textarea">' + currentText + '</textarea>' +
+      '<div class="edit-actions">' +
+        '<button class="edit-save-btn">Save</button>' +
+        '<button class="edit-cancel-btn">Cancel</button>' +
+      '</div>';
+
+    item.querySelector('.review-edit-btn').style.display = 'none';
+    item.querySelector('.review-delete-btn').style.display = 'none';
+
+    // cancel
+    item.querySelector('.edit-cancel-btn').addEventListener('click', function () {
+      commentEl.innerHTML = currentText;
+      item.querySelector('.review-edit-btn').style.display = '';
+      item.querySelector('.review-delete-btn').style.display = '';
+    });
+
+    // save
+    item.querySelector('.edit-save-btn').addEventListener('click', function () {
+      var newComment = item.querySelector('.edit-textarea').value.trim();
+      fetch(API_BASE + '/api/reviews/' + r._id, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ratings: r.ratings, comments: newComment })
+      })
+        .then(function (res) { return res.json(); })
+        .then(function () {
+          commentEl.innerHTML = newComment || 'No comment left.';
+          item.querySelector('.review-edit-btn').style.display = '';
+          item.querySelector('.review-delete-btn').style.display = '';
+        })
+        .catch(function () {
+          alert('Could not save. Try again.');
+        });
+    });
+  };
 }

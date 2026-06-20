@@ -59,4 +59,15 @@ router.post('/', async (req, res) => {
   }
 });
 
+router.delete('/:id', async (req, res) => {
+  try {
+    const db = await getDB();
+    await db.collection('properties').deleteOne({ _id: new ObjectId(req.params.id) });
+    await db.collection('reviews').deleteMany({ propertyId: new ObjectId(req.params.id) });
+    res.json({ message: 'Property deleted' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 export default router;
