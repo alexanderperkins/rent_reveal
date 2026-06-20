@@ -4,6 +4,11 @@ import { connectDB } from './db.js';
 import propertiesRouter from './routes/properties.js';
 import reviewsRouter from './routes/reviews.js';
 import cors from 'cors';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT ?? 3000;
@@ -13,7 +18,7 @@ app.use(cors({
 }));
 
 app.use(express.json());
-app.use(express.static('.'));
+app.use(express.static(__dirname + '/..'));
 
 app.use('/api/properties', propertiesRouter);
 app.use('/api/reviews', reviewsRouter);
