@@ -9,6 +9,19 @@ if (window.location.hostname === 'localhost' || window.location.hostname === '12
   API_BASE = 'https://rent-reveal.onrender.com';
 }
 
+fetch(API_BASE + '/api/config')
+  .then(function (res) { return res.json(); })
+  .then(function (config) {
+    var script = document.createElement('script');
+    script.src = 'https://maps.googleapis.com/maps/api/js?key=' + config.mapsApiKey + '&callback=initMap';
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
+  })
+  .catch(function () {
+    console.log('Could not load Maps API key.');
+  });
+  
 function initMap() {
   map = new google.maps.Map(document.getElementById('map'), {
     center: { lat: 42.3398, lng: -71.0892 },
@@ -37,7 +50,6 @@ function loadPropertyMarkers() {
 }
 
 function plotMarkers(properties) {
-  // clear existing markers
   for (var i = 0; i < markers.length; i++) {
     markers[i].setMap(null);
   }
@@ -46,7 +58,12 @@ function plotMarkers(properties) {
   var geocoder = new google.maps.Geocoder();
 
   for (var i = 0; i < properties.length; i++) {
-    geocodeAndPlot(geocoder, properties[i]);
+    var p = properties[i];
+    if (p.location.lat && p.location.lng) {
+      plotMarker(p, { lat: p.location.lat, lng: p.location.lng });
+    } else {
+      geocodeAndPlot(geocoder, p);
+    }
   }
 }
 
@@ -130,3 +147,57 @@ document.getElementById('search-btn').addEventListener('click', searchAddress);
 document.getElementById('address-input').addEventListener('keydown', function (e) {
   if (e.key === 'Enter') searchAddress();
 });
+
+function plotMarker(property, position) {
+  var rating = property.reviewCount > 0
+    ? property.averageRatings.overall.toFixed(1)
+    : null;
+
+  var color = '#888888';
+  if (rating) {
+    var r = parseFloat(rating);
+    if (r >= 4) color = '#2ecc71';
+    else if (r >= 3) color = '#e8a020';
+    else color = '#c0392b';
+  }
+
+  var marker = new google.maps.Marker({
+    position: position,
+    map: map,
+    title: property.location.address,
+    icon: {
+      path: google.maps.SymbolPath.CIRCLE,
+      scale: 10,
+      fillColor: color,
+      fillOpacity: 1,
+      strokeColor: '#ffffff',
+      strokeWeight: 2,
+    },
+    label: rating ? {
+      text: rating,
+      color: '#ffffff',
+      fontSize: '10px',
+      fontWeight: 'bold'
+    } : null
+  });
+
+  var propertyId = property._id;
+  var address = property.location.address + ', ' + property.location.city;
+  var ratingText = rating ? '★ ' + rating : 'No ratings yet';
+  var reviewText = property.reviewCount + ' review' + (property.reviewCount !== 1 ? 's' : '');
+
+  marker.addListener('click', function () {
+    infoWindow.setContent(
+      '<div style="font-family:sans-serif;min-width:160px;">' +
+        '<strong style="font-size:0.95rem;">' + address + '</strong>' +
+        '<p style="margin:6px 0;color:#555;">' + ratingText + ' · ' + reviewText + '</p>' +
+        '<a href="/pages/properties.html?id=' + propertyId + '" ' +
+          'style="display:inline-block;margin-top:4px;padding:6px 12px;background:#333;color:white;' +
+          'border-radius:4px;text-decoration:none;font-size:0.85rem;">View Reviews</a>' +
+      '</div>'
+    );
+    infoWindow.open(map, marker);
+  });
+
+  markers.push(marker);
+}

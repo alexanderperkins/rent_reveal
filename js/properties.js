@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // fetch and show properties
 function loadAllProperties() {
-  fetch(API_BASE + '/api/properties')
+  return fetch(API_BASE + '/api/properties')
     .then(function (res) {
       return res.json();
     })

@@ -38,9 +38,9 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const db = await getDB();
-    const { address, city, state, zip, propertyType } = req.body;
+    const { address, city, state, zip, propertyType, lat, lng } = req.body;
     const newProperty = {
-      location: { address, city, state, zip },
+      location: { address, city, state, zip, lat, lng },
       propertyType,
       averageRatings: {
         overall: 0,
@@ -55,7 +55,11 @@ router.post('/', async (req, res) => {
     const result = await db.collection('properties').insertOne(newProperty);
     res.status(201).json({ _id: result.insertedId, ...newProperty });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    if (err.code === 11000) {
+      res.status(409).json({ error: 'Property already exists.' });
+    } else {
+      res.status(500).json({ error: err.message });
+    }
   }
 });
 

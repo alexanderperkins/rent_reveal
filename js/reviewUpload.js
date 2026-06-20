@@ -1,5 +1,4 @@
 var selectedPropertyId = null;
-var overallRating = 0;
 
 var API_BASE;
 if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
@@ -91,7 +90,6 @@ function selectProperty(id, address) {
 
 
 // add new property
-
 document.getElementById('add-property-btn').addEventListener('click', function () {
   var address = document.getElementById('new-address').value.trim();
   var city = document.getElementById('new-city').value.trim();
@@ -108,9 +106,7 @@ document.getElementById('add-property-btn').addEventListener('click', function (
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ address: address, city: city, state: state, zip: zip }),
   })
-    .then(function (res) {
-      return res.json();
-    })
+    .then(function (res) { return res.json(); })
     .then(function (property) {
       document.getElementById('add-property-section').classList.add('hidden');
       var fullAddress = address + ', ' + city + ', ' + state + ' ' + zip;
