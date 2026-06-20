@@ -4,6 +4,25 @@ import { ObjectId } from 'mongodb';
 
 const router = Router();
 
+router.get('/', async (req, res) => {
+  try {
+    const db = await getDB();
+    const search = req.query.search;
+    var filter;
+
+    if (search) {
+      filter = { 'location.address': search };
+    } else {
+      filter = {};
+    }
+
+    const properties = await db.collection('properties').find(filter).toArray();
+    res.json(properties);
+  } catch (err) {
+    res.json({ error: err.message });
+  }
+});
+
 router.post('/', async (req, res) => {
   try {
     const db = await getDB();

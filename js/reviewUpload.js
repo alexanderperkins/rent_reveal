@@ -1,6 +1,13 @@
 var selectedPropertyId = null;
 var overallRating = 0;
 
+var API_BASE;
+if (window.location.hostname == 'localhost') {
+  API_BASE = 'http://localhost:3000';
+} else {
+  API_BASE = 'https://rent-reveal.onrender.com';
+}
+
 // search for property
 
 document.getElementById('search-btn').addEventListener('click', function () {
@@ -10,7 +17,7 @@ document.getElementById('search-btn').addEventListener('click', function () {
   document.getElementById('search-results').innerHTML = '<p class="empty-msg">Searching…</p>';
   document.getElementById('add-property-section').classList.add('hidden');
 
-  fetch('https://rent-reveal.onrender.com/api/properties?search=' + encodeURIComponent(query))
+  fetch(API_BASE + '/api/properties?search=' + encodeURIComponent(query))
     .then(function (res) {
       return res.json();
     })
@@ -93,7 +100,7 @@ document.getElementById('add-property-btn').addEventListener('click', function (
     return;
   }
 
-  fetch('https://rent-reveal.onrender.com/api/properties', {
+  fetch(API_BASE + '/api/properties', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ address: address, city: city, state: state, zip: zip }),
@@ -159,7 +166,7 @@ document.getElementById('submit-btn').addEventListener('click', function () {
 
   var comments = document.getElementById('comments').value.trim();
 
-  fetch('https://rent-reveal.onrender.com/api/reviews', {
+  fetch(API_BASE + '/api/reviews', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({

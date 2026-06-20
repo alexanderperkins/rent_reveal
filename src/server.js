@@ -9,11 +9,11 @@ const app = express();
 const PORT = process.env.PORT ?? 3000;
 
 app.use(cors({
-  origin: 'https://rent-reveal.netlify.app'
+  origin: ['https://rent-reveal.netlify.app', 'http://localhost:3000']
 }));
 
 app.use(express.json());
-app.use(express.static('..'));
+app.use(express.static('.'));
 
 app.use('/api/properties', propertiesRouter);
 app.use('/api/reviews', reviewsRouter);

@@ -1,3 +1,10 @@
+var API_BASE;
+if (window.location.hostname == 'localhost') {
+  API_BASE = 'http://localhost:3000';
+} else {
+  API_BASE = 'https://rent-reveal.onrender.com';
+}
+
 // load properties when page is ready
 document.addEventListener('DOMContentLoaded', function () {
   loadAllProperties();
@@ -5,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // fetch and show properties
 function loadAllProperties() {
-  fetch('https://rent-reveal.onrender.com/api/properties')
+  fetch(API_BASE + '/api/properties')
     .then(function (res) {
       return res.json();
     })
@@ -52,7 +59,7 @@ document.getElementById('search-btn').addEventListener('click', function () {
     return;
   }
 
-  fetch('https://rent-reveal.onrender.com/api/properties?search=' + encodeURIComponent(query))
+  fetch(API_BASE + '/api/properties?search=' + encodeURIComponent(query))
     .then(function (res) {
       return res.json();
     })
