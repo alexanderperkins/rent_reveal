@@ -7,7 +7,14 @@ if (window.location.hostname === 'localhost' || window.location.hostname === '12
 
 // load properties when page is ready
 document.addEventListener('DOMContentLoaded', function () {
-  loadAllProperties();
+  loadAllProperties().then(function () {
+    var params = new URLSearchParams(window.location.search);
+    var id = params.get('id');
+    if (id) {
+      var item = document.querySelector('[data-id="' + id + '"]');
+      if (item) item.click();
+    }
+  });
 });
 
 // fetch and show properties
@@ -25,6 +32,8 @@ function loadAllProperties() {
     });
 }
 
+
+// Show list of properties
 function renderList(properties) {
   var list = document.getElementById('property-list');
 
@@ -41,6 +50,7 @@ function renderList(properties) {
 
     var item = document.createElement('li');
     item.className = 'property-item';
+    item.dataset.id = p._id;
     item.innerHTML =
       '<span class="item-address">' + p.location.address + ', ' + p.location.city + '</span>' +
       '<span class="item-meta">' + rating + ' · ' + p.reviewCount + ' reviews</span>' +
@@ -52,6 +62,7 @@ function renderList(properties) {
   }
 }
 
+// Handle delete property
 function makePropertyDeleteHandler(propertyId, item) {
   return function (e) {
     e.stopPropagation(); // prevent opening the reviews panel
