@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // fetch and show properties
 function loadAllProperties() {
-  fetch('/api/properties')
+  fetch('https://rent-reveal.onrender.com/api/properties')
     .then(function (res) {
       return res.json();
     })
@@ -52,7 +52,7 @@ document.getElementById('search-btn').addEventListener('click', function () {
     return;
   }
 
-  fetch('/api/properties?search=' + encodeURIComponent(query))
+  fetch('https://rent-reveal.onrender.com/api/properties?search=' + encodeURIComponent(query))
     .then(function (res) {
       return res.json();
     })

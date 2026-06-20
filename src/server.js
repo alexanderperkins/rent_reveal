@@ -13,7 +13,7 @@ app.use(cors({
 }));
 
 app.use(express.json());
-app.use(express.static('.'));
+app.use(express.static('..'));
 
 app.use('/api/properties', propertiesRouter);
 app.use('/api/reviews', reviewsRouter);
