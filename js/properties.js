@@ -1,5 +1,5 @@
 var API_BASE;
-if (window.location.hostname == 'localhost') {
+if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
   API_BASE = 'http://localhost:3000';
 } else {
   API_BASE = 'https://rent-reveal.onrender.com';
@@ -46,6 +46,7 @@ function renderList(properties) {
       '<span class="item-address">' + p.location.address + ', ' + p.location.city + '</span>' +
       '<span class="item-meta">' + rating + ' · ' + p.reviewCount + ' reviews</span>';
 
+    item.addEventListener('click', makePropertyClickHandler(p));
     list.appendChild(item);
   }
 }
@@ -75,5 +76,71 @@ document.getElementById('search-btn').addEventListener('click', function () {
 document.getElementById('property-search').addEventListener('keydown', function (e) {
   if (e.key === 'Enter') {
     document.getElementById('search-btn').click();
+  }
+});
+
+// open reviews panel when property clicked
+function makePropertyClickHandler(p) {
+  return function () {
+    var items = document.querySelectorAll('.property-item');
+    for (var i = 0; i < items.length; i++) {
+      items[i].classList.remove('selected');
+    }
+    this.classList.add('selected');
+    loadReviews(p._id, p.location.address + ', ' + p.location.city);
+  };
+}
+
+function loadReviews(propertyId, address) {
+  document.getElementById('reviews-panel-address').textContent = address;
+  document.getElementById('reviews-list').innerHTML = '<p class="empty-msg">Loading reviews…</p>';
+  document.getElementById('reviews-panel').classList.remove('hidden');
+
+  fetch(API_BASE + '/api/reviews?propertyId=' + propertyId)
+    .then(function (res) {
+      return res.json();
+    })
+    .then(function (reviews) {
+      renderReviews(reviews);
+    })
+    .catch(function () {
+      document.getElementById('reviews-list').innerHTML = '<p class="empty-msg">Could not load reviews.</p>';
+    });
+}
+
+function renderReviews(reviews) {
+  var list = document.getElementById('reviews-list');
+
+  if (reviews.length === 0) {
+    list.innerHTML = '<p class="empty-msg">No reviews yet. Be the first to submit one.</p>';
+    return;
+  }
+
+  list.innerHTML = '';
+
+  for (var i = 0; i < reviews.length; i++) {
+    var r = reviews[i];
+    var date = new Date(r.createdAt).toLocaleDateString();
+    var stars = '★'.repeat(r.ratings.overall) + '☆'.repeat(5 - r.ratings.overall);
+
+    var item = document.createElement('div');
+    item.className = 'review-item';
+    item.innerHTML =
+      '<div class="review-header">' +
+        '<span class="review-stars">' + stars + '</span>' +
+        '<span class="review-date">' + date + '</span>' +
+      '</div>' +
+      '<p class="review-comment">' + (r.comments || 'No comment left.') + '</p>';
+
+    list.appendChild(item);
+  }
+}
+
+// close reviews panel
+document.getElementById('reviews-close-btn').addEventListener('click', function () {
+  document.getElementById('reviews-panel').classList.add('hidden');
+  var items = document.querySelectorAll('.property-item');
+  for (var i = 0; i < items.length; i++) {
+    items[i].classList.remove('selected');
   }
 });

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -13,7 +13,9 @@
       <div class="nav-links">
         <a href="/" class="nav-link">Search</a>
         <a href="/pages/properties.html" class="nav-link active">Properties</a>
-        <a href="/pages/reviewUpload.html" class="nav-link nav-link--cta">Submit a Review</a>
+        <a href="/pages/reviewUpload.html" class="nav-link nav-link--cta"
+          >Submit a Review</a
+        >
       </div>
     </nav>
 
@@ -32,6 +34,15 @@
       <ul id="property-list">
         <li class="empty-msg">Search above to see properties.</li>
       </ul>
+
+      <div id="reviews-panel" class="reviews-panel hidden">
+        <div class="reviews-panel-header">
+          <h3 id="reviews-panel-address" class="reviews-panel-title"></h3>
+          <button id="reviews-close-btn" class="reviews-close-btn">✕</button>
+        </div>
+        <div id="reviews-panel-ratings" class="reviews-panel-ratings"></div>
+        <div id="reviews-list" class="reviews-list"></div>
+      </div>
     </main>
 
     <script src="/js/properties.js"></script>

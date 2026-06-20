@@ -2,7 +2,7 @@ var selectedPropertyId = null;
 var overallRating = 0;
 
 var API_BASE;
-if (window.location.hostname == 'localhost') {
+if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
   API_BASE = 'http://localhost:3000';
 } else {
   API_BASE = 'https://rent-reveal.onrender.com';
