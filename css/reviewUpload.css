@@ -169,3 +169,21 @@ label {
   font-size: 14px;
   color: #888;
 }
+
+.ratings-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.rating-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.rating-row label {
+  width: 120px;
+  font-weight: 500;
+}

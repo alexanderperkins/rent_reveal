@@ -75,17 +75,20 @@ function makeSelectHandler(id, address, el) {
 // display review form for property
 function selectProperty(id, address) {
   selectedPropertyId = id;
-
   document.getElementById('selected-address').textContent = address;
   document.getElementById('review-section').classList.remove('hidden');
-
-  // reset form
-  overallRating = 0;
-  updateStars(0);
+  ratings = { overall: 0, management: 0, safety: 0, noise: 0, cleanliness: 0 };
+  for (var c = 0; c < categories.length; c++) {
+    var stars = document.getElementById('stars-' + categories[c]).querySelectorAll('.star');
+    for (var i = 0; i < stars.length; i++) {
+      stars[i].classList.remove('active');
+    }
+  }
   document.getElementById('comments').value = '';
   document.getElementById('submit-msg').textContent = '';
   document.getElementById('submit-msg').className = 'submit-msg';
 }
+
 
 // add new property
 
@@ -131,36 +134,50 @@ document.getElementById('add-property-btn').addEventListener('click', function (
 
 // star rating
 
-var stars = document.querySelectorAll('#stars .star');
+// ratings state
+var ratings = {
+  overall: 0,
+  management: 0,
+  safety: 0,
+  noise: 0,
+  cleanliness: 0
+};
 
-for (var i = 0; i < stars.length; i++) {
-  stars[i].addEventListener('click', makeStarClickHandler(i + 1));
+// set up stars for each category
+var categories = ['overall', 'management', 'safety', 'noise', 'cleanliness'];
+
+for (var c = 0; c < categories.length; c++) {
+  setupStars(categories[c]);
 }
 
-function makeStarClickHandler(value) {
-  return function () {
-    overallRating = value;
-    updateStars(value);
-  };
-}
+function setupStars(category) {
+  var container = document.getElementById('stars-' + category);
+  var stars = container.querySelectorAll('.star');
 
-function updateStars(value) {
   for (var i = 0; i < stars.length; i++) {
-    if (i < value) {
-      stars[i].classList.add('active');
-    } else {
-      stars[i].classList.remove('active');
-    }
+    stars[i].addEventListener('click', makeStarHandler(category, i + 1, stars));
   }
 }
 
+function makeStarHandler(category, value, stars) {
+  return function () {
+    ratings[category] = value;
+    for (var i = 0; i < stars.length; i++) {
+      if (i < value) {
+        stars[i].classList.add('active');
+      } else {
+        stars[i].classList.remove('active');
+      }
+    }
+  };
+}
 // submit review
 
 document.getElementById('submit-btn').addEventListener('click', function () {
   if (!selectedPropertyId) return;
 
-  if (overallRating === 0) {
-    showMsg('Please select a rating.', 'error');
+  if (ratings.overall === 0) {
+    showMsg('Please select an overall rating.', 'error');
     return;
   }
 
@@ -171,17 +188,20 @@ document.getElementById('submit-btn').addEventListener('click', function () {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       propertyId: selectedPropertyId,
-      ratings: { overall: overallRating },
+      ratings: ratings,
       comments: comments,
     }),
   })
-    .then(function (res) {
-      return res.json();
-    })
+    .then(function (res) { return res.json(); })
     .then(function () {
       showMsg('Review submitted! Thank you.', 'success');
-      overallRating = 0;
-      updateStars(0);
+      ratings = { overall: 0, management: 0, safety: 0, noise: 0, cleanliness: 0 };
+      for (var c = 0; c < categories.length; c++) {
+        var stars = document.getElementById('stars-' + categories[c]).querySelectorAll('.star');
+        for (var i = 0; i < stars.length; i++) {
+          stars[i].classList.remove('active');
+        }
+      }
       document.getElementById('comments').value = '';
     })
     .catch(function () {
