@@ -218,3 +218,28 @@
 .property-delete-btn:hover {
   color: #c0392b;
 }
+
+.property-edit-btn {
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  color: #666;
+  margin-left: 0.5rem;
+}
+
+.property-edit-btn:hover {
+  border-color: #333;
+  color: #333;
+}
+
+.edit-field {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 0.2rem 0.4rem;
+  font-size: 0.85rem;
+  margin-right: 0.4rem;
+  margin-bottom: 0.3rem;
+}

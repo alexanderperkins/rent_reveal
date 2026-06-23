@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="/css/index.css" />
     <link rel="stylesheet" href="/css/reviewUpload.css" />
   </head>
-  <script src="/js/reviewUpload.js"></script>
   <body>
     <nav class="nav">
       <a class="nav-logo" href="/">Rent Reveal</a>
@@ -75,7 +74,7 @@
         </div>
 
         <!-- write review -->
-        <div id="review-section" class="hidden">
+        <form id="review-section" class="hidden">
           <h2 class="step-heading">Please share your review for:</h2>
           <p id="selected-address" class="selected-address"></p>
 
@@ -142,7 +141,7 @@
             Submit review anonymously
           </button>
           <p id="submit-msg" class="submit-msg"></p>
-        </div>
+        </form>
       </div>
     </main>
 

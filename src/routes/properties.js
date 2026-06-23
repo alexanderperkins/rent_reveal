@@ -75,4 +75,28 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+router.put('/:id', async (req, res) => {
+  try {
+    const db = await getDB();
+    const { address, city, state, zip, propertyType } = req.body;
+    const result = await db.collection('properties').findOneAndUpdate(
+      { _id: new ObjectId(req.params.id) },
+      {
+        $set: {
+          'location.address': address,
+          'location.city': city,
+          'location.state': state,
+          'location.zip': zip,
+          propertyType,
+        },
+      },
+      { returnDocument: 'after' }
+    );
+    if (!result) return res.status(404).json({ error: 'Not found' });
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 export default router;

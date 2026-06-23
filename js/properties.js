@@ -1,8 +1,5 @@
 var API_BASE;
-if (
-  window.location.hostname === 'localhost' ||
-  window.location.hostname === '127.0.0.1'
-) {
+if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
   API_BASE = 'http://localhost:3000';
 } else {
   API_BASE = 'https://rent-reveal.onrender.com';
@@ -35,6 +32,7 @@ function loadAllProperties() {
     });
 }
 
+
 // Show list of properties
 function renderList(properties) {
   var list = document.getElementById('property-list');
@@ -48,30 +46,19 @@ function renderList(properties) {
 
   for (var i = 0; i < properties.length; i++) {
     var p = properties[i];
-    var rating =
-      p.reviewCount > 0
-        ? '★ ' + p.averageRatings.overall.toFixed(1)
-        : 'No ratings yet';
+    var rating = p.reviewCount > 0 ? '★ ' + p.averageRatings.overall.toFixed(1) : 'No ratings yet';
 
     var item = document.createElement('li');
     item.className = 'property-item';
     item.dataset.id = p._id;
     item.innerHTML =
-      '<span class="item-address">' +
-      p.location.address +
-      ', ' +
-      p.location.city +
-      '</span>' +
-      '<span class="item-meta">' +
-      rating +
-      ' · ' +
-      p.reviewCount +
-      ' reviews</span>' +
-      '<button class="property-delete-btn">✕</button>';
+    '<span class="item-address">' + p.location.address + ', ' + p.location.city + '</span>' +
+    '<span class="item-meta">' + rating + ' · ' + p.reviewCount + ' reviews</span>' +
+    '<button class="property-edit-btn">Edit</button>' +
+    '<button class="property-delete-btn">✕</button>';
 
-    item
-      .querySelector('.property-delete-btn')
-      .addEventListener('click', makePropertyDeleteHandler(p._id, item));
+    item.querySelector('.property-delete-btn').addEventListener('click', makePropertyDeleteHandler(p._id, item));
+    item.querySelector('.property-edit-btn').addEventListener('click', makePropertyEditHandler(p, item));
     item.addEventListener('click', makePropertyClickHandler(p));
     list.appendChild(item);
   }
@@ -83,9 +70,7 @@ function makePropertyDeleteHandler(propertyId, item) {
     e.stopPropagation(); // prevent opening the reviews panel
     if (!confirm('Delete this property and all its reviews?')) return;
     fetch(API_BASE + '/api/properties/' + propertyId, { method: 'DELETE' })
-      .then(function (res) {
-        return res.json();
-      })
+      .then(function (res) { return res.json(); })
       .then(function () {
         var panel = document.getElementById('reviews-panel');
         if (panel && panel.dataset.propertyId === propertyId) panel.remove();
@@ -94,6 +79,60 @@ function makePropertyDeleteHandler(propertyId, item) {
       .catch(function () {
         alert('Could not delete property. Try again.');
       });
+  };
+}
+
+function makePropertyEditHandler(p, item) {
+  return function (e) {
+    e.stopPropagation();
+
+    var addressEl = item.querySelector('.item-address');
+    var current = p.location;
+
+    addressEl.innerHTML =
+      '<input class="edit-field" id="edit-address" value="' + current.address + '" placeholder="Address" />' +
+      '<input class="edit-field" id="edit-city" value="' + current.city + '" placeholder="City" />' +
+      '<input class="edit-field" id="edit-state" value="' + current.state + '" placeholder="State" maxlength="2" />' +
+      '<input class="edit-field" id="edit-zip" value="' + current.zip + '" placeholder="Zip" maxlength="5" />' +
+      '<button class="edit-save-btn">Save</button>' +
+      '<button class="edit-cancel-btn">Cancel</button>';
+
+    item.querySelector('.property-edit-btn').style.display = 'none';
+    item.querySelector('.property-delete-btn').style.display = 'none';
+
+    item.querySelector('.edit-cancel-btn').addEventListener('click', function (e) {
+      e.stopPropagation();
+      addressEl.innerHTML = p.location.address + ', ' + p.location.city;
+      item.querySelector('.property-edit-btn').style.display = '';
+      item.querySelector('.property-delete-btn').style.display = '';
+    });
+
+    item.querySelector('.edit-save-btn').addEventListener('click', function (e) {
+      e.stopPropagation();
+      var newAddress = item.querySelector('#edit-address').value.trim();
+      var newCity = item.querySelector('#edit-city').value.trim();
+      var newState = item.querySelector('#edit-state').value.trim();
+      var newZip = item.querySelector('#edit-zip').value.trim();
+
+      fetch(API_BASE + '/api/properties/' + p._id, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ address: newAddress, city: newCity, state: newState, zip: newZip, propertyType: p.propertyType }),
+      })
+        .then(function (res) { return res.json(); })
+        .then(function () {
+          p.location.address = newAddress;
+          p.location.city = newCity;
+          p.location.state = newState;
+          p.location.zip = newZip;
+          addressEl.innerHTML = newAddress + ', ' + newCity;
+          item.querySelector('.property-edit-btn').style.display = '';
+          item.querySelector('.property-delete-btn').style.display = '';
+        })
+        .catch(function () {
+          alert('Could not update property. Try again.');
+        });
+    });
   };
 }
 
@@ -119,13 +158,11 @@ document.getElementById('search-btn').addEventListener('click', function () {
     });
 });
 
-document
-  .getElementById('property-search')
-  .addEventListener('keydown', function (e) {
-    if (e.key === 'Enter') {
-      document.getElementById('search-btn').click();
-    }
-  });
+document.getElementById('property-search').addEventListener('keydown', function (e) {
+  if (e.key === 'Enter') {
+    document.getElementById('search-btn').click();
+  }
+});
 
 // open reviews panel when property clicked
 function makePropertyClickHandler(p) {
@@ -154,26 +191,20 @@ function makePropertyClickHandler(p) {
     panel.dataset.propertyId = p._id;
     panel.innerHTML =
       '<div class="reviews-panel-header">' +
-      '<h3 class="reviews-panel-title">' +
-      p.location.address +
-      ', ' +
-      p.location.city +
-      '</h3>' +
-      '<button class="reviews-close-btn">✕</button>' +
+        '<h3 class="reviews-panel-title">' + p.location.address + ', ' + p.location.city + '</h3>' +
+        '<button class="reviews-close-btn">✕</button>' +
       '</div>' +
       '<div id="reviews-list"><p class="empty-msg">Loading reviews…</p></div>';
 
     this.insertAdjacentElement('afterend', panel);
 
-    panel
-      .querySelector('.reviews-close-btn')
-      .addEventListener('click', function () {
-        panel.remove();
-        items = document.querySelectorAll('.property-item');
-        for (var i = 0; i < items.length; i++) {
-          items[i].classList.remove('selected');
-        }
-      });
+    panel.querySelector('.reviews-close-btn').addEventListener('click', function () {
+      panel.remove();
+      items = document.querySelectorAll('.property-item');
+      for (var i = 0; i < items.length; i++) {
+        items[i].classList.remove('selected');
+      }
+    });
 
     loadReviews(p._id);
   };
@@ -181,12 +212,8 @@ function makePropertyClickHandler(p) {
 
 function loadReviews(propertyId) {
   fetch(API_BASE + '/api/reviews?propertyId=' + propertyId)
-    .then(function (res) {
-      return res.json();
-    })
-    .then(function (reviews) {
-      renderReviews(reviews);
-    })
+    .then(function (res) { return res.json(); })
+    .then(function (reviews) { renderReviews(reviews); })
     .catch(function () {
       document.getElementById('reviews-list').innerHTML =
         '<p class="empty-msg">Could not load reviews.</p>';
@@ -197,8 +224,7 @@ function renderReviews(reviews) {
   var list = document.getElementById('reviews-list');
 
   if (reviews.length === 0) {
-    list.innerHTML =
-      '<p class="empty-msg">No reviews yet. Be the first to submit one.</p>';
+    list.innerHTML = '<p class="empty-msg">No reviews yet. Be the first to submit one.</p>';
     return;
   }
 
@@ -206,14 +232,13 @@ function renderReviews(reviews) {
   for (var i = 0; i < reviews.length; i++) {
     var r = reviews[i];
     var date = new Date(r.createdAt).toLocaleDateString();
-    var stars =
-      '★'.repeat(r.ratings.overall) + '☆'.repeat(5 - r.ratings.overall);
+    var stars = '★'.repeat(r.ratings.overall) + '☆'.repeat(5 - r.ratings.overall);
 
     var cats = [
       { label: 'Management', key: 'management' },
       { label: 'Safety', key: 'safety' },
       { label: 'Noise', key: 'noise' },
-      { label: 'Cleanliness', key: 'cleanliness' },
+      { label: 'Cleanliness', key: 'cleanliness' }
     ];
 
     var catHTML = '';
@@ -222,13 +247,8 @@ function renderReviews(reviews) {
       if (val > 0) {
         catHTML +=
           '<div class="review-cat">' +
-          '<span class="review-cat-label">' +
-          cats[j].label +
-          '</span>' +
-          '<span class="review-cat-stars">' +
-          '★'.repeat(val) +
-          '☆'.repeat(5 - val) +
-          '</span>' +
+            '<span class="review-cat-label">' + cats[j].label + '</span>' +
+            '<span class="review-cat-stars">' + '★'.repeat(val) + '☆'.repeat(5 - val) + '</span>' +
           '</div>';
       }
     }
@@ -237,31 +257,21 @@ function renderReviews(reviews) {
     item.className = 'review-item';
     item.innerHTML =
       '<div class="review-header">' +
-      '<span class="review-stars">' +
-      stars +
-      '</span>' +
-      '<span class="review-date">' +
-      date +
-      '</span>' +
+        '<span class="review-stars">' + stars + '</span>' +
+        '<span class="review-date">' + date + '</span>' +
       '</div>' +
       (catHTML ? '<div class="review-cats">' + catHTML + '</div>' : '') +
-      '<p class="review-comment">' +
-      (r.comments || 'No comment left.') +
-      '</p>' +
+      '<p class="review-comment">' + (r.comments || 'No comment left.') + '</p>' +
       '<div class="review-actions">' +
-      '<button class="review-edit-btn">Edit</button>' +
-      '<button class="review-delete-btn">Delete</button>' +
+        '<button class="review-edit-btn">Edit</button>' +
+        '<button class="review-delete-btn">Delete</button>' +
       '</div>';
 
     // delete handler
-    item
-      .querySelector('.review-delete-btn')
-      .addEventListener('click', makeDeleteHandler(r._id, r.propertyId, item));
+    item.querySelector('.review-delete-btn').addEventListener('click', makeDeleteHandler(r._id, r.propertyId, item));
 
     // edit handler
-    item
-      .querySelector('.review-edit-btn')
-      .addEventListener('click', makeEditHandler(r, item));
+    item.querySelector('.review-edit-btn').addEventListener('click', makeEditHandler(r, item));
 
     list.appendChild(item);
   }
@@ -271,9 +281,7 @@ function makeDeleteHandler(reviewId, propertyId, item) {
   return function () {
     if (!confirm('Delete this review?')) return;
     fetch(API_BASE + '/api/reviews/' + reviewId, { method: 'DELETE' })
-      .then(function (res) {
-        return res.json();
-      })
+      .then(function (res) { return res.json(); })
       .then(function () {
         item.remove();
         // reload reviews to update count
@@ -292,25 +300,21 @@ function makeEditHandler(r, item) {
     var currentText = commentEl.textContent;
 
     commentEl.innerHTML =
-      '<textarea class="edit-textarea">' +
-      currentText +
-      '</textarea>' +
+      '<textarea class="edit-textarea">' + currentText + '</textarea>' +
       '<div class="edit-actions">' +
-      '<button class="edit-save-btn">Save</button>' +
-      '<button class="edit-cancel-btn">Cancel</button>' +
+        '<button class="edit-save-btn">Save</button>' +
+        '<button class="edit-cancel-btn">Cancel</button>' +
       '</div>';
 
     item.querySelector('.review-edit-btn').style.display = 'none';
     item.querySelector('.review-delete-btn').style.display = 'none';
 
     // cancel
-    item
-      .querySelector('.edit-cancel-btn')
-      .addEventListener('click', function () {
-        commentEl.innerHTML = currentText;
-        item.querySelector('.review-edit-btn').style.display = '';
-        item.querySelector('.review-delete-btn').style.display = '';
-      });
+    item.querySelector('.edit-cancel-btn').addEventListener('click', function () {
+      commentEl.innerHTML = currentText;
+      item.querySelector('.review-edit-btn').style.display = '';
+      item.querySelector('.review-delete-btn').style.display = '';
+    });
 
     // save
     item.querySelector('.edit-save-btn').addEventListener('click', function () {
@@ -318,11 +322,9 @@ function makeEditHandler(r, item) {
       fetch(API_BASE + '/api/reviews/' + r._id, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ratings: r.ratings, comments: newComment }),
+        body: JSON.stringify({ ratings: r.ratings, comments: newComment })
       })
-        .then(function (res) {
-          return res.json();
-        })
+        .then(function (res) { return res.json(); })
         .then(function () {
           commentEl.innerHTML = newComment || 'No comment left.';
           item.querySelector('.review-edit-btn').style.display = '';
