@@ -13,9 +13,11 @@ const __dirname = dirname(__filename);
 const app = express();
 const PORT = process.env.PORT ?? 3000;
 
-app.use(cors({
-  origin: ['https://rent-reveal.netlify.app', 'http://localhost:3000']
-}));
+app.use(
+  cors({
+    origin: ['https://rent-reveal.netlify.app', 'http://localhost:3000'],
+  })
+);
 
 app.use(express.json());
 app.use(express.static(__dirname + '/..'));
@@ -28,7 +30,9 @@ app.get('/api/config', (req, res) => {
 });
 
 connectDB().then(() => {
-  app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+  app.listen(PORT, () =>
+    console.log(`Server running on http://localhost:${PORT}`)
+  );
 });
 
 app.get('/api/config', (req, res) => {

@@ -1,45 +1,51 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rent Reveal</title>
-  <link rel="stylesheet" href="/css/index.css">
-</head>
-<body>
-  <nav class="nav">
-    <a class="nav-logo" href="/">Rent Reveal</a>
-    <div class="nav-links">
-      <a href="/" class="nav-link active">Search</a>
-      <a href="/pages/properties.html" class="nav-link">Properties</a>
-      <a href="/pages/reviewUpload.html" class="nav-link nav-link--cta">Submit a Review</a>
-    </div>
-  </nav>
-
-  <main class="home">
-    <section class="hero">
-      <h1 class="hero-title">Know Before You Sign.</h1>
-      <p class="hero-sub">Anonymous reviews from real tenants. Search any address to see management quality, safety, and what living there actually costs.</p>
-      <div class="search-bar">
-        <input
-          type="text"
-          id="address-input"
-          class="search-input"
-          placeholder="Enter an address, neighborhood, or zip code…"
-          autocomplete="off"
-        />
-        <button class="search-btn" id="search-btn">Search</button>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rent Reveal</title>
+    <link rel="stylesheet" href="/css/index.css" />
+  </head>
+  <body>
+    <nav class="nav">
+      <a class="nav-logo" href="/">Rent Reveal</a>
+      <div class="nav-links">
+        <a href="/" class="nav-link active">Search</a>
+        <a href="/pages/properties.html" class="nav-link">Properties</a>
+        <a href="/pages/reviewUpload.html" class="nav-link nav-link--cta"
+          >Submit a Review</a
+        >
       </div>
-    </section>
+    </nav>
 
-    <section class="map-section">
-      <div id="map"></div>
-    </section>
-  </main>
+    <main class="home">
+      <section class="hero">
+        <h1 class="hero-title">Know Before You Sign.</h1>
+        <p class="hero-sub">
+          Anonymous reviews from real tenants. Search any address to see
+          management quality, safety, and what living there actually costs.
+        </p>
+        <div class="search-bar">
+          <input
+            type="text"
+            id="address-input"
+            class="search-input"
+            placeholder="Enter an address, neighborhood, or zip code…"
+            autocomplete="off"
+          />
+          <button class="search-btn" id="search-btn">Search</button>
+        </div>
+      </section>
 
-  <script async
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBn09VDlMozBIG-xNc6shYk42bs7W3XOE8&callback=initMap">
-  </script>
-  <script src="/js/index.js"></script>
-</body>
+      <section class="map-section">
+        <div id="map"></div>
+      </section>
+    </main>
+
+    <script
+      async
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBn09VDlMozBIG-xNc6shYk42bs7W3XOE8&callback=initMap"
+    ></script>
+    <script src="/js/index.js"></script>
+  </body>
 </html>

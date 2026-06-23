@@ -3,17 +3,25 @@ var markers = [];
 var infoWindow;
 
 var API_BASE;
-if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+if (
+  window.location.hostname === 'localhost' ||
+  window.location.hostname === '127.0.0.1'
+) {
   API_BASE = 'http://localhost:3000';
 } else {
   API_BASE = 'https://rent-reveal.onrender.com';
 }
 
 fetch(API_BASE + '/api/config')
-  .then(function (res) { return res.json(); })
+  .then(function (res) {
+    return res.json();
+  })
   .then(function (config) {
     var script = document.createElement('script');
-    script.src = 'https://maps.googleapis.com/maps/api/js?key=' + config.mapsApiKey + '&callback=initMap';
+    script.src =
+      'https://maps.googleapis.com/maps/api/js?key=' +
+      config.mapsApiKey +
+      '&callback=initMap';
     script.async = true;
     script.defer = true;
     document.head.appendChild(script);
@@ -21,17 +29,17 @@ fetch(API_BASE + '/api/config')
   .catch(function () {
     console.log('Could not load Maps API key.');
   });
-  
+
 function initMap() {
   map = new google.maps.Map(document.getElementById('map'), {
     center: { lat: 42.3398, lng: -71.0892 },
     zoom: 12,
     styles: [
       {
-        featureType: "poi",
-        stylers: [{ visibility: "off" }]
-      }
-    ]
+        featureType: 'poi',
+        stylers: [{ visibility: 'off' }],
+      },
+    ],
   });
 
   infoWindow = new google.maps.InfoWindow();
@@ -40,7 +48,9 @@ function initMap() {
 
 function loadPropertyMarkers() {
   fetch(API_BASE + '/api/properties')
-    .then(function (res) { return res.json(); })
+    .then(function (res) {
+      return res.json();
+    })
     .then(function (properties) {
       plotMarkers(properties);
     })
@@ -68,14 +78,20 @@ function plotMarkers(properties) {
 }
 
 function geocodeAndPlot(geocoder, property) {
-  var fullAddress = property.location.address + ', ' + property.location.city + ', ' + property.location.state;
+  var fullAddress =
+    property.location.address +
+    ', ' +
+    property.location.city +
+    ', ' +
+    property.location.state;
 
   geocoder.geocode({ address: fullAddress }, function (results, status) {
     if (status !== 'OK') return;
 
-    var rating = property.reviewCount > 0
-      ? property.averageRatings.overall.toFixed(1)
-      : null;
+    var rating =
+      property.reviewCount > 0
+        ? property.averageRatings.overall.toFixed(1)
+        : null;
 
     var color = '#888888';
     if (rating) {
@@ -97,28 +113,41 @@ function geocodeAndPlot(geocoder, property) {
         strokeColor: '#ffffff',
         strokeWeight: 2,
       },
-      label: rating ? {
-        text: rating,
-        color: '#ffffff',
-        fontSize: '10px',
-        fontWeight: 'bold'
-      } : null
+      label: rating
+        ? {
+            text: rating,
+            color: '#ffffff',
+            fontSize: '10px',
+            fontWeight: 'bold',
+          }
+        : null,
     });
 
     var propertyId = property._id;
     var address = property.location.address + ', ' + property.location.city;
     var ratingText = rating ? '★ ' + rating : 'No ratings yet';
-    var reviewText = property.reviewCount + ' review' + (property.reviewCount !== 1 ? 's' : '');
+    var reviewText =
+      property.reviewCount +
+      ' review' +
+      (property.reviewCount !== 1 ? 's' : '');
 
     marker.addListener('click', function () {
       infoWindow.setContent(
         '<div style="font-family:sans-serif;min-width:160px;">' +
-          '<strong style="font-size:0.95rem;">' + address + '</strong>' +
-          '<p style="margin:6px 0;color:#555;">' + ratingText + ' · ' + reviewText + '</p>' +
-          '<a href="/pages/properties.html?id=' + propertyId + '" ' +
-            'style="display:inline-block;margin-top:4px;padding:6px 12px;background:#333;color:white;' +
-            'border-radius:4px;text-decoration:none;font-size:0.85rem;">View Reviews</a>' +
-        '</div>'
+          '<strong style="font-size:0.95rem;">' +
+          address +
+          '</strong>' +
+          '<p style="margin:6px 0;color:#555;">' +
+          ratingText +
+          ' · ' +
+          reviewText +
+          '</p>' +
+          '<a href="/pages/properties.html?id=' +
+          propertyId +
+          '" ' +
+          'style="display:inline-block;margin-top:4px;padding:6px 12px;background:#333;color:white;' +
+          'border-radius:4px;text-decoration:none;font-size:0.85rem;">View Reviews</a>' +
+          '</div>'
       );
       infoWindow.open(map, marker);
     });
@@ -144,14 +173,17 @@ function searchAddress() {
 
 document.getElementById('search-btn').addEventListener('click', searchAddress);
 
-document.getElementById('address-input').addEventListener('keydown', function (e) {
-  if (e.key === 'Enter') searchAddress();
-});
+document
+  .getElementById('address-input')
+  .addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') searchAddress();
+  });
 
 function plotMarker(property, position) {
-  var rating = property.reviewCount > 0
-    ? property.averageRatings.overall.toFixed(1)
-    : null;
+  var rating =
+    property.reviewCount > 0
+      ? property.averageRatings.overall.toFixed(1)
+      : null;
 
   var color = '#888888';
   if (rating) {
@@ -173,28 +205,39 @@ function plotMarker(property, position) {
       strokeColor: '#ffffff',
       strokeWeight: 2,
     },
-    label: rating ? {
-      text: rating,
-      color: '#ffffff',
-      fontSize: '10px',
-      fontWeight: 'bold'
-    } : null
+    label: rating
+      ? {
+          text: rating,
+          color: '#ffffff',
+          fontSize: '10px',
+          fontWeight: 'bold',
+        }
+      : null,
   });
 
   var propertyId = property._id;
   var address = property.location.address + ', ' + property.location.city;
   var ratingText = rating ? '★ ' + rating : 'No ratings yet';
-  var reviewText = property.reviewCount + ' review' + (property.reviewCount !== 1 ? 's' : '');
+  var reviewText =
+    property.reviewCount + ' review' + (property.reviewCount !== 1 ? 's' : '');
 
   marker.addListener('click', function () {
     infoWindow.setContent(
       '<div style="font-family:sans-serif;min-width:160px;">' +
-        '<strong style="font-size:0.95rem;">' + address + '</strong>' +
-        '<p style="margin:6px 0;color:#555;">' + ratingText + ' · ' + reviewText + '</p>' +
-        '<a href="/pages/properties.html?id=' + propertyId + '" ' +
-          'style="display:inline-block;margin-top:4px;padding:6px 12px;background:#333;color:white;' +
-          'border-radius:4px;text-decoration:none;font-size:0.85rem;">View Reviews</a>' +
-      '</div>'
+        '<strong style="font-size:0.95rem;">' +
+        address +
+        '</strong>' +
+        '<p style="margin:6px 0;color:#555;">' +
+        ratingText +
+        ' · ' +
+        reviewText +
+        '</p>' +
+        '<a href="/pages/properties.html?id=' +
+        propertyId +
+        '" ' +
+        'style="display:inline-block;margin-top:4px;padding:6px 12px;background:#333;color:white;' +
+        'border-radius:4px;text-decoration:none;font-size:0.85rem;">View Reviews</a>' +
+        '</div>'
     );
     infoWindow.open(map, marker);
   });

@@ -1,7 +1,10 @@
 var selectedPropertyId = null;
 
 var API_BASE;
-if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+if (
+  window.location.hostname === 'localhost' ||
+  window.location.hostname === '127.0.0.1'
+) {
   API_BASE = 'http://localhost:3000';
 } else {
   API_BASE = 'https://rent-reveal.onrender.com';
@@ -13,7 +16,8 @@ document.getElementById('search-btn').addEventListener('click', function () {
   var query = document.getElementById('address-input').value.trim();
   if (!query) return;
 
-  document.getElementById('search-results').innerHTML = '<p class="empty-msg">Searching…</p>';
+  document.getElementById('search-results').innerHTML =
+    '<p class="empty-msg">Searching…</p>';
   document.getElementById('add-property-section').classList.add('hidden');
 
   fetch(API_BASE + '/api/properties?search=' + encodeURIComponent(query))
@@ -25,7 +29,9 @@ document.getElementById('search-btn').addEventListener('click', function () {
 
       if (properties.length === 0) {
         resultsEl.innerHTML = '';
-        document.getElementById('add-property-section').classList.remove('hidden');
+        document
+          .getElementById('add-property-section')
+          .classList.remove('hidden');
         document.getElementById('new-address').value = query;
         return;
       }
@@ -33,31 +39,56 @@ document.getElementById('search-btn').addEventListener('click', function () {
       resultsEl.innerHTML = '';
       for (var i = 0; i < properties.length; i++) {
         var p = properties[i];
-        var fullAddress = p.location.address + ', ' + p.location.city + ', ' + p.location.state + ' ' + p.location.zip;
-        var rating = p.reviewCount > 0 ? '★ ' + p.averageRatings.overall.toFixed(1) : 'No ratings yet';
+        var fullAddress =
+          p.location.address +
+          ', ' +
+          p.location.city +
+          ', ' +
+          p.location.state +
+          ' ' +
+          p.location.zip;
+        var rating =
+          p.reviewCount > 0
+            ? '★ ' + p.averageRatings.overall.toFixed(1)
+            : 'No ratings yet';
 
         var item = document.createElement('div');
         item.className = 'result-item';
         item.dataset.id = p._id;
         item.dataset.address = fullAddress;
         item.innerHTML =
-          '<div class="result-address">' + p.location.address + '</div>' +
-          '<div class="result-meta">' + p.location.city + ', ' + p.location.state + ' · ' + rating + '</div>';
+          '<div class="result-address">' +
+          p.location.address +
+          '</div>' +
+          '<div class="result-meta">' +
+          p.location.city +
+          ', ' +
+          p.location.state +
+          ' · ' +
+          rating +
+          '</div>';
 
-        item.addEventListener('click', makeSelectHandler(p._id, fullAddress, item));
+        item.addEventListener(
+          'click',
+          makeSelectHandler(p._id, fullAddress, item)
+        );
         resultsEl.appendChild(item);
       }
     })
     .catch(function () {
       document.getElementById('search-results').innerHTML = '';
-      document.getElementById('add-property-section').classList.remove('hidden');
+      document
+        .getElementById('add-property-section')
+        .classList.remove('hidden');
       document.getElementById('new-address').value = query;
     });
 });
 
-document.getElementById('address-input').addEventListener('keydown', function (e) {
-  if (e.key === 'Enter') document.getElementById('search-btn').click();
-});
+document
+  .getElementById('address-input')
+  .addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') document.getElementById('search-btn').click();
+  });
 
 // return click handler for search
 function makeSelectHandler(id, address, el) {
@@ -78,7 +109,9 @@ function selectProperty(id, address) {
   document.getElementById('review-section').classList.remove('hidden');
   ratings = { overall: 0, management: 0, safety: 0, noise: 0, cleanliness: 0 };
   for (var c = 0; c < categories.length; c++) {
-    var stars = document.getElementById('stars-' + categories[c]).querySelectorAll('.star');
+    var stars = document
+      .getElementById('stars-' + categories[c])
+      .querySelectorAll('.star');
     for (var i = 0; i < stars.length; i++) {
       stars[i].classList.remove('active');
     }
@@ -88,45 +121,59 @@ function selectProperty(id, address) {
   document.getElementById('submit-msg').className = 'submit-msg';
 }
 
-
 // add new property
-document.getElementById('add-property-btn').addEventListener('click', function () {
-  var address = document.getElementById('new-address').value.trim();
-  var city = document.getElementById('new-city').value.trim();
-  var state = document.getElementById('new-state').value.trim();
-  var zip = document.getElementById('new-zip').value.trim();
+document
+  .getElementById('add-property-btn')
+  .addEventListener('click', function () {
+    var address = document.getElementById('new-address').value.trim();
+    var city = document.getElementById('new-city').value.trim();
+    var state = document.getElementById('new-state').value.trim();
+    var zip = document.getElementById('new-zip').value.trim();
 
-  if (!address || !city || !state || !zip) {
-    alert('Please fill in all address fields.');
-    return;
-  }
+    if (!address || !city || !state || !zip) {
+      alert('Please fill in all address fields.');
+      return;
+    }
 
-  fetch(API_BASE + '/api/properties', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ address: address, city: city, state: state, zip: zip }),
-  })
-    .then(function (res) { return res.json(); })
-    .then(function (property) {
-      document.getElementById('add-property-section').classList.add('hidden');
-      var fullAddress = address + ', ' + city + ', ' + state + ' ' + zip;
-
-      var item = document.createElement('div');
-      item.className = 'result-item selected';
-      item.innerHTML =
-        '<div class="result-address">' + address + '</div>' +
-        '<div class="result-meta">' + city + ', ' + state + ' · Just added</div>';
-
-      var resultsEl = document.getElementById('search-results');
-      resultsEl.innerHTML = '';
-      resultsEl.appendChild(item);
-
-      selectProperty(property._id, fullAddress);
+    fetch(API_BASE + '/api/properties', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        address: address,
+        city: city,
+        state: state,
+        zip: zip,
+      }),
     })
-    .catch(function () {
-      alert('Could not add property. Try again.');
-    });
-});
+      .then(function (res) {
+        return res.json();
+      })
+      .then(function (property) {
+        document.getElementById('add-property-section').classList.add('hidden');
+        var fullAddress = address + ', ' + city + ', ' + state + ' ' + zip;
+
+        var item = document.createElement('div');
+        item.className = 'result-item selected';
+        item.innerHTML =
+          '<div class="result-address">' +
+          address +
+          '</div>' +
+          '<div class="result-meta">' +
+          city +
+          ', ' +
+          state +
+          ' · Just added</div>';
+
+        var resultsEl = document.getElementById('search-results');
+        resultsEl.innerHTML = '';
+        resultsEl.appendChild(item);
+
+        selectProperty(property._id, fullAddress);
+      })
+      .catch(function () {
+        alert('Could not add property. Try again.');
+      });
+  });
 
 // star rating
 
@@ -136,7 +183,7 @@ var ratings = {
   management: 0,
   safety: 0,
   noise: 0,
-  cleanliness: 0
+  cleanliness: 0,
 };
 
 // set up stars for each category
@@ -188,12 +235,22 @@ document.getElementById('submit-btn').addEventListener('click', function () {
       comments: comments,
     }),
   })
-    .then(function (res) { return res.json(); })
+    .then(function (res) {
+      return res.json();
+    })
     .then(function () {
       showMsg('Review submitted! Thank you.', 'success');
-      ratings = { overall: 0, management: 0, safety: 0, noise: 0, cleanliness: 0 };
+      ratings = {
+        overall: 0,
+        management: 0,
+        safety: 0,
+        noise: 0,
+        cleanliness: 0,
+      };
       for (var c = 0; c < categories.length; c++) {
-        var stars = document.getElementById('stars-' + categories[c]).querySelectorAll('.star');
+        var stars = document
+          .getElementById('stars-' + categories[c])
+          .querySelectorAll('.star');
         for (var i = 0; i < stars.length; i++) {
           stars[i].classList.remove('active');
         }

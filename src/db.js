@@ -7,7 +7,6 @@ const client = new MongoClient(process.env.MONGODB_URI, {
 
 let db;
 
-
 export async function connectDB() {
   if (db) return db;
   await client.connect();

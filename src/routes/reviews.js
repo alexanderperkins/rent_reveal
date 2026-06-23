@@ -11,7 +11,7 @@ async function recalcRatings(db, propertyId) {
     .toArray();
 
   const count = reviews.length;
-  const avg = (field) => 
+  const avg = (field) =>
     count
       ? reviews.reduce((sum, r) => sum + (r.ratings[field] ?? 0), 0) / count
       : 0;
@@ -35,7 +35,8 @@ router.get('/', async (req, res) => {
   try {
     const db = await getDB();
     const { propertyId } = req.query;
-    if (!propertyId) return res.status(400).json({ error: 'propertyId required' });
+    if (!propertyId)
+      return res.status(400).json({ error: 'propertyId required' });
     const reviews = await db
       .collection('reviews')
       .find({ propertyId: new ObjectId(propertyId) })
@@ -71,11 +72,13 @@ router.put('/:id', async (req, res) => {
   try {
     const db = await getDB();
     const { ratings, comments } = req.body;
-    const result = await db.collection('reviews').findOneAndUpdate(
-      { _id: new ObjectId(req.params.id) },
-      { $set: { ratings, comments } },
-      { returnDocument: 'after' }
-    );
+    const result = await db
+      .collection('reviews')
+      .findOneAndUpdate(
+        { _id: new ObjectId(req.params.id) },
+        { $set: { ratings, comments } },
+        { returnDocument: 'after' }
+      );
     await recalcRatings(db, result.propertyId.toString());
     res.json(result);
   } catch (err) {
