@@ -29,7 +29,7 @@ fetch(API_BASE + '/api/config')
   .catch(function () {
     console.log('Could not load Maps API key.');
   });
-
+// eslint-disable-next-line no-unused-vars
 function initMap() {
   map = new google.maps.Map(document.getElementById('map'), {
     center: { lat: 42.3398, lng: -71.0892 },
@@ -67,8 +67,8 @@ function plotMarkers(properties) {
 
   var geocoder = new google.maps.Geocoder();
 
-  for (var i = 0; i < properties.length; i++) {
-    var p = properties[i];
+  for (var j = 0; j < properties.length; j++) {
+    var p = properties[j];
     if (p.location.lat && p.location.lng) {
       plotMarker(p, { lat: p.location.lat, lng: p.location.lng });
     } else {
