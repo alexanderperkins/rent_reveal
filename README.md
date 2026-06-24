@@ -27,7 +27,7 @@ If a property isn't listed yet, you can add it and leave the first review.
 - Backend: Node.js + Express
 - Database: MongoDB Atlas (Native Node.js Driver)
 - Maps: Google Maps JavaScript API
-- Hosting: Render (backend), Netlify (frontend)
+- Hosting: Render (backend), Netlify (frontend) (Note: backend is hosted on Render free tier and may take up to 60 seconds to wake up on first load.)
 
 ## How to run locally
 
